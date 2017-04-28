@@ -45,6 +45,7 @@ struct Identifier;
 struct StackAssignment;
 struct FunctionDefinition;
 struct FunctionCall;
+struct ForLoop;
 
 struct AsmAnalysisInfo;
 }
@@ -91,6 +92,7 @@ public:
 	void operator()(solidity::assembly::Block const& _block);
 	void operator()(solidity::assembly::Switch const& _switch);
 	void operator()(solidity::assembly::FunctionDefinition const&);
+	void operator()(solidity::assembly::ForLoop const&);
 
 private:
 	void generateAssignment(solidity::assembly::Identifier const& _variableName, SourceLocation const& _location);

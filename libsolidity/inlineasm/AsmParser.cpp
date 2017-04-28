@@ -87,6 +87,8 @@ assembly::Statement Parser::parseStatement()
 		_switch.location.end = _switch.cases.back().body.location.end;
 		return _switch;
 	}
+	case Token::For:
+		return parseForLoop();
 	case Token::Assign:
 	{
 		if (m_julia)
@@ -307,6 +309,18 @@ assembly::VariableDeclaration Parser::parseVariableDeclaration()
 	varDecl.value.reset(new Statement(parseExpression()));
 	varDecl.location.end = locationOf(*varDecl.value).end;
 	return varDecl;
+}
+
+assembly::ForLoop Parser:parseForLoop()
+{
+	ForLoop forLoop = createWithLocation<ForLoop>();
+	expectToken(Token::For);
+	forLoop.preCondition = parseBlock();
+	forLoop.expression = parseExpression();
+	forLoop.postCondition = parseBlock();
+	forLoop.body = parseBlock();
+	forLoop.location.end = locationOf(forLoop.body).end;
+	return forLoop;
 }
 
 assembly::FunctionDefinition Parser::parseFunctionDefinition()

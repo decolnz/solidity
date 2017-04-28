@@ -106,6 +106,12 @@ bool ScopeFiller::operator()(Switch const& _switch)
 	return success;
 }
 
+bool ScopeFiller::operator()(ForLoop const& _forLoop)
+{
+	/// FIXME: implement
+	return true;
+}
+
 bool ScopeFiller::operator()(Block const& _block)
 {
 	bool success = true;

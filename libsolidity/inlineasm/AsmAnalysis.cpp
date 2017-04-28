@@ -327,6 +327,12 @@ bool AsmAnalyzer::operator()(Switch const& _switch)
 	return success;
 }
 
+bool AsmAnalyzer::operator()(assembly::ForLoop const& _forLoop)
+{
+	// FIXME: implement
+	return true;
+}
+
 bool AsmAnalyzer::operator()(Block const& _block)
 {
 	bool success = true;

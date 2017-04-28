@@ -133,6 +133,11 @@ void CodeTransform::operator()(Switch const&)
 	solAssert(false, "Switch not removed during desugaring phase.");
 }
 
+void CodeTransform::operator()(ForLoop const&)
+{
+	solAssert(false, "For loop not removed during desugaring phase.");
+}
+
 void CodeTransform::operator()(VariableDeclaration const& _varDecl)
 {
 	int expectedItems = _varDecl.variables.size();

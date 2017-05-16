@@ -429,6 +429,16 @@ BOOST_AUTO_TEST_CASE(revert)
 	BOOST_CHECK(successAssemble("{ revert(0, 0) }"));
 }
 
+BOOST_AUTO_TEST_CASE(returndatasize)
+{
+	BOOST_CHECK(successAssemble("{ let r := returndatasize }"));
+}
+
+BOOST_AUTO_TEST_CASE(returndatacopy)
+{
+	BOOST_CHECK(successAssemble("{ returndatacopy(0, 32, 64) }"));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()

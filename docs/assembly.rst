@@ -232,6 +232,10 @@ In the grammar, opcodes are represented as pre-defined identifiers.
 +-------------------------+------+-----------------------------------------------------------------+
 | extcodecopy(a, t, f, s) | `-`  | like codecopy(t, f, s) but take code at address a               |
 +-------------------------+------+-----------------------------------------------------------------+
+| returndatasize          |      | size of the last return data                                    |
++-------------------------+------+-----------------------------------------------------------------+
+| returndatacopy(t, f, s) | `*`  | copy s bytes from returndata at position f to mem at position t |
++-------------------------+------+-----------------------------------------------------------------+
 | create(v, p, s)         |      | create new contract with code mem[p..(p+s)) and send v wei      |
 |                         |      | and return the new address                                      |
 +-------------------------+------+-----------------------------------------------------------------+

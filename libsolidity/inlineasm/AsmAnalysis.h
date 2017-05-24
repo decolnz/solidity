@@ -86,6 +86,7 @@ private:
 	bool checkAssignment(assembly::Identifier const& _assignment, size_t _valueSize = size_t(-1));
 	bool expectDeposit(int _deposit, int _oldHeight, SourceLocation const& _location);
 	Scope& scope(assembly::Block const* _block);
+	void warnOnFutureInstruction(solidity::Instruction _instr, SourceLocation const& _location);
 
 	/// This is used when we enter the body of a function definition. There, the parameters
 	/// and return parameters appear as variables which are already on the stack before

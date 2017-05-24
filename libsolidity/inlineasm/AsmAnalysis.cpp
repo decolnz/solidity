@@ -66,6 +66,7 @@ bool AsmAnalyzer::operator()(assembly::Instruction const& _instruction)
 	auto const& info = instructionInfo(_instruction.instruction);
 	m_stackHeight += info.ret - info.args;
 	m_info.stackHeightInfo[&_instruction] = m_stackHeight;
+	warnOnFutureInstruction(_instruction.instruction, _instruction.location);
 	return true;
 }
 
@@ -157,6 +158,7 @@ bool AsmAnalyzer::operator()(FunctionalInstruction const& _instr)
 	if (!(*this)(_instr.instruction))
 		success = false;
 	m_info.stackHeightInfo[&_instr] = m_stackHeight;
+	warnOnFutureInstruction(_instr.instruction.instruction, _instr.location);
 	return success;
 }
 
@@ -410,4 +412,22 @@ Scope& AsmAnalyzer::scope(Block const* _block)
 	auto scopePtr = m_info.scopes.at(_block);
 	solAssert(scopePtr, "Scope requested but not present.");
 	return *scopePtr;
+}
+
+void AsmAnalyzer::warnOnFutureInstruction(solidity::Instruction _instr, SourceLocation const& _location)
+{
+	switch (_instr)
+	{
+	case solidity::Instruction::RETURNDATASIZE:
+	case solidity::Instruction::RETURNDATACOPY:
+		m_errors.push_back(make_shared<Error>(
+			Error::Type::Warning,
+			"The RETURNDATASIZE/RETURNDATACOPY instructions are only available after "
+			"the Metropolis hard fork. Before that they act as an invalid instruction.",
+			_location
+		));
+		break;
+	default:
+		break;
+	}
 }

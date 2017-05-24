@@ -63,6 +63,7 @@ struct GenericVisitor<>: public boost::static_visitor<> {
 struct Scope
 {
 	using JuliaType = std::string;
+	using LabelID = size_t;
 
 	struct Variable
 	{
@@ -76,7 +77,7 @@ struct Scope
 
 	struct Label
 	{
-		boost::optional<size_t> id;
+		boost::optional<LabelID> id;
 	};
 
 	struct Function
@@ -84,6 +85,7 @@ struct Scope
 		Function(std::vector<JuliaType> const& _arguments, std::vector<JuliaType> const& _returns): arguments(_arguments), returns(_returns) {}
 		std::vector<JuliaType> arguments;
 		std::vector<JuliaType> returns;
+		boost::optional<LabelID> id;
 	};
 
 	using Identifier = boost::variant<Variable, Label, Function>;

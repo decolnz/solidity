@@ -70,12 +70,12 @@ public:
 		m_assembly.append(_constant);
 	}
 	/// Append a label.
-	virtual void appendLabel(size_t _labelId) override
+	virtual void appendLabel(LabelID _labelId) override
 	{
 		m_assembly.append(eth::AssemblyItem(eth::Tag, _labelId));
 	}
 	/// Append a label reference.
-	virtual void appendLabelReference(size_t _labelId) override
+	virtual void appendLabelReference(LabelID _labelId) override
 	{
 		m_assembly.append(eth::AssemblyItem(eth::PushTag, _labelId));
 	}
@@ -87,13 +87,41 @@ public:
 	{
 		m_assembly.appendLibraryAddress(_linkerSymbol);
 	}
+	virtual void appendJumpTo(LabelID _label) override
+	{
+		appendLabelReference(_label);
+		appendInstruction(solidity::Instruction::JUMP);
+	}
+	virtual void appendJumpToIf(LabelID _label) override
+	{
+		appendLabelReference(_label);
+		appendInstruction(solidity::Instruction::JUMPI);
+	}
+	virtual void appendBeginsub(LabelID, int) override
+	{
+		// TODO we could emulate that, though
+		solAssert(false, "BEGINSUB not implemented for EVM 1.0");
+	}
+	/// Call a subroutine.
+	virtual void appendJumpsub(LabelID, int, int) override
+	{
+		// TODO we could emulate that, though
+		solAssert(false, "JUMPSUB not implemented for EVM 1.0");
+	}
+
+	/// Return from a subroutine.
+	virtual void appendReturnsub(int) override
+	{
+		// TODO we could emulate that, though
+		solAssert(false, "RETURNSUB not implemented for EVM 1.0");
+	}
 
 private:
-	size_t assemblyTagToIdentifier(eth::AssemblyItem const& _tag) const
+	LabelID assemblyTagToIdentifier(eth::AssemblyItem const& _tag) const
 	{
 		u256 id = _tag.data();
-		solAssert(id <= std::numeric_limits<size_t>::max(), "Tag id too large.");
-		return size_t(id);
+		solAssert(id <= std::numeric_limits<LabelID>::max(), "Tag id too large.");
+		return LabelID(id);
 	}
 
 	eth::Assembly& m_assembly;
@@ -107,7 +135,7 @@ eth::Assembly assembly::CodeGenerator::assemble(
 {
 	eth::Assembly assembly;
 	EthAssemblyAdapter assemblyAdapter(assembly);
-	julia::CodeTransform(m_errors, assemblyAdapter, _parsedData, _analysisInfo, _identifierAccess);
+	julia::CodeTransform(m_errors, assemblyAdapter, _analysisInfo, false, _identifierAccess).run(_parsedData);
 	return assembly;
 }
 
@@ -119,5 +147,5 @@ void assembly::CodeGenerator::assemble(
 )
 {
 	EthAssemblyAdapter assemblyAdapter(_assembly);
-	julia::CodeTransform(m_errors, assemblyAdapter, _parsedData, _analysisInfo, _identifierAccess);
+	julia::CodeTransform(m_errors, assemblyAdapter, _analysisInfo, false, _identifierAccess).run(_parsedData);
 }

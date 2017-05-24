@@ -86,7 +86,7 @@ bool ScopeFiller::operator()(assembly::FunctionDefinition const& _funDef)
 		success = false;
 	}
 
-	auto virtualBlock = m_info.virtualBlocks[&_funDef] =make_shared<Block const>();
+	auto virtualBlock = m_info.virtualBlocks[&_funDef] = make_shared<Block const>();
 	Scope& varScope = scope(virtualBlock.get());
 	varScope.superScope = m_currentScope;
 	m_currentScope = &varScope;

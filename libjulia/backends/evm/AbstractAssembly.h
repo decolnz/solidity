@@ -44,6 +44,8 @@ namespace julia
 class AbstractAssembly
 {
 public:
+	using LabelID = size_t;
+
 	virtual ~AbstractAssembly() {}
 
 	/// Set a new source location valid starting from the next instruction.
@@ -56,11 +58,28 @@ public:
 	/// Append a constant.
 	virtual void appendConstant(u256 const& _constant) = 0;
 	/// Append a label.
-	virtual void appendLabel(size_t _labelId) = 0;
+	virtual void appendLabel(LabelID _labelId) = 0;
 	/// Append a label reference.
-	virtual void appendLabelReference(size_t _labelId) = 0;
+	virtual void appendLabelReference(LabelID _labelId) = 0;
 	/// Generate a new unique label.
-	virtual size_t newLabelId() = 0;
+	virtual LabelID newLabelId() = 0;
+
+	/// @defgroup EVM 1.5 features
+	/// @{
+
+	/// Append a jump-to-immediate operation.
+	virtual void appendJumpTo(LabelID _label) = 0;
+	/// Append a jump-to-if-immediate operation.
+	virtual void appendJumpToIf(LabelID _label) = 0;
+	/// Start a subroutine.
+	virtual void appendBeginsub(LabelID _label, int _arguments) = 0;
+	/// Call a subroutine.
+	virtual void appendJumpsub(LabelID _label, int _arguments, int _returns) = 0;
+	/// Return from a subroutine.
+	virtual void appendReturnsub(int _returns) = 0;
+
+	/// @}
+
 	/// Append a reference to a to-be-linked symobl.
 	/// Currently, we assume that the value is always a 20 byte number.
 	virtual void appendLinkerSymbol(std::string const& _name) = 0;

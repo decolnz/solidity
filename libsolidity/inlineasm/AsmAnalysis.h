@@ -89,10 +89,6 @@ private:
 	bool expectDeposit(int _deposit, int _oldHeight, SourceLocation const& _location);
 	Scope& scope(assembly::Block const* _block);
 
-	/// This is used when we enter the body of a function definition. There, the parameters
-	/// and return parameters appear as variables which are already on the stack before
-	/// we enter the block.
-	int m_virtualVariablesInNextBlock = 0;
 	int m_stackHeight = 0;
 	julia::ExternalIdentifierAccess::Resolver const& m_resolver;
 	Scope* m_currentScope = nullptr;

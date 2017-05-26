@@ -49,7 +49,7 @@ AsmAnalyzer::AsmAnalyzer(
 
 bool AsmAnalyzer::analyze(Block const& _block)
 {
-	if (!(ScopeFiller(m_info.scopes, m_errors))(_block))
+	if (!(ScopeFiller(m_info, m_errors))(_block))
 		return false;
 
 	return (*this)(_block);
@@ -202,13 +202,12 @@ bool AsmAnalyzer::operator()(assembly::VariableDeclaration const& _varDecl)
 
 bool AsmAnalyzer::operator()(assembly::FunctionDefinition const& _funDef)
 {
-	Scope& bodyScope = scope(&_funDef.body);
+	Scope& varScope = scope(m_info.virtualBlocks.at(&_funDef).get());
 	for (auto const& var: _funDef.arguments + _funDef.returns)
-		boost::get<Scope::Variable>(bodyScope.identifiers.at(var.name)).active = true;
+		boost::get<Scope::Variable>(varScope.identifiers.at(var.name)).active = true;
 
 	int const stackHeight = m_stackHeight;
 	m_stackHeight = _funDef.arguments.size() + _funDef.returns.size();
-	m_virtualVariablesInNextBlock = m_stackHeight;
 
 	bool success = (*this)(_funDef.body);
 
@@ -332,8 +331,7 @@ bool AsmAnalyzer::operator()(Block const& _block)
 	bool success = true;
 	m_currentScope = &scope(&_block);
 
-	int const initialStackHeight = m_stackHeight - m_virtualVariablesInNextBlock;
-	m_virtualVariablesInNextBlock = 0;
+	int const initialStackHeight = m_stackHeight;
 
 	for (auto const& s: _block.statements)
 		if (!boost::apply_visitor(*this, s))
